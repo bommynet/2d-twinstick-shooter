@@ -122,4 +122,28 @@ public class Player {
 		
 		sr.dispose();
 	}
+	
+	/**
+	 * @return
+	 */
+	public Vector2 getPosition() {
+		return _pos;
+	}
+	
+	/**
+	 * @param pos
+	 */
+	public void setPosition(Vector2 pos) {
+		// TODO: error handling
+		_pos = pos;
+	}
+	
+
+	
+	/**
+	 * @return
+	 */
+	public float getRadius() {
+		return 10f;
+	}
 }
