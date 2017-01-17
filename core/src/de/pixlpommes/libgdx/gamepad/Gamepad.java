@@ -10,7 +10,6 @@ import de.pixlpommes.libgdx.gamepad.mappings.LogitechPad;
 
 /**
  * @author Thomas Borck
- *
  */
 public class Gamepad implements ControllerListener {
 	

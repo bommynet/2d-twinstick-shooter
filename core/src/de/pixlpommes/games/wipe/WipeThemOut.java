@@ -9,23 +9,24 @@ import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import de.pixlpommes.games.wipe.entities.Player;
 import de.pixlpommes.libgdx.gamepad.Gamepad;
 
 /**
  * @author Thomas Borck
- *
  */
 public class WipeThemOut extends ApplicationAdapter {
 	
 	private OrthographicCamera _cam;
 	
-	private Player _player1;
+	private Player[] _players;
+	
+	private Stage _curStage;
 	
 	private List<Vector2> _bullets = new ArrayList<Vector2>();
 	private List<Vector2> _bulletsSpeed = new ArrayList<Vector2>();
@@ -41,12 +42,16 @@ public class WipeThemOut extends ApplicationAdapter {
 	public void create() {
 		_cam = new OrthographicCamera();
 		
+		_players = new Player[1];
+		
 		if(Controllers.getControllers().size > 0) {
 			Gamepad pad = new Gamepad(Controllers.getControllers().first());
 			Controllers.addListener(pad);
 			
-			_player1 = new Player(pad);
+			_players[0] = new Player(pad);
 		}
+		
+		_curStage = new OneRoomStage(_players, _cam);
 	}
 
 	/* (non-Javadoc)
@@ -57,19 +62,7 @@ public class WipeThemOut extends ApplicationAdapter {
 		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
-		float deltaTime = Gdx.graphics.getDeltaTime();
-		
-		// update logic
-		_player1.update(deltaTime);
-		
-		
-		// draw entities
-		SpriteBatch batch = new SpriteBatch();
-		batch.setProjectionMatrix(_cam.combined);
-		batch.begin();
-		_player1.draw(batch);
-		batch.end();
-		batch.dispose();
+		_curStage.draw();
 		
 		
 		
@@ -82,54 +75,6 @@ public class WipeThemOut extends ApplicationAdapter {
 //		} else {
 //			_bulletTimer += Gdx.graphics.getDeltaTime();
 //		}
-		
-		
-		
-		ShapeRenderer sr = new ShapeRenderer();
-		sr.setProjectionMatrix(_cam.combined);
-		
-		
-		
-		
-		
-		// draw bullets
-		sr.begin(ShapeType.Filled);
-		sr.setColor(Color.GREEN);
-		for(int i = _bullets.size()-1; i >= 0; i--) {
-			// update
-			_bullets.get(i).add(new Vector2().add(_bulletsSpeed.get(i)).scl(Gdx.graphics.getDeltaTime()));
-			
-			Vector2 b = _bullets.get(i);
-			if(b.x < -Gdx.graphics.getWidth() ||
-					b.x > Gdx.graphics.getWidth() ||
-					b.y < -Gdx.graphics.getHeight() ||
-					b.x > Gdx.graphics.getHeight()) {
-				_bullets.remove(i);
-				_bulletsSpeed.remove(i);
-			} else {
-				// draw
-				sr.circle(_bullets.get(i).x, _bullets.get(i).y, 4);
-			}
-		}
-		sr.end();
-		
-		
-		
-		// draw debug
-//		sr.begin(ShapeType.Line);
-//		
-//		sr.setColor(Color.BLACK);
-//		sr.circle(0, 0, 2);
-//
-//		sr.setColor(Color.RED);
-//		sr.line(0, 0, 100 * left.x, 100 * left.y);
-//
-//		sr.setColor(Color.GREEN);
-//		sr.circle(100 * right.x, 100 * right.y, 2);
-//		
-//		sr.end();
-		
-		sr.dispose();
 	}
 	
 	/* (non-Javadoc)
@@ -148,6 +93,6 @@ public class WipeThemOut extends ApplicationAdapter {
 	 */
 	@Override
 	public void dispose() {
-		
+		_curStage.dispose();
 	}
 }
