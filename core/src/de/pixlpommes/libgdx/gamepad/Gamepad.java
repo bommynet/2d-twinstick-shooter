@@ -68,7 +68,12 @@ public class Gamepad implements ControllerListener {
 	 */
 	@Override
 	public boolean buttonUp(Controller controller, int buttonCode) {
-		// TODO Auto-generated method stub
+		if(_controller != controller) return false;
+		
+		// update all values TODO: do it better
+		_buttonLT = controller.getButton(LogitechPad.BUTTON_LB);
+		_buttonRT = controller.getButton(LogitechPad.BUTTON_RB);
+		
 		return false;
 	}
 

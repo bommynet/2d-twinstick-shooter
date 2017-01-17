@@ -9,10 +9,12 @@ import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 
+import de.pixlpommes.games.wipe.entities.Player;
 import de.pixlpommes.libgdx.gamepad.Gamepad;
 
 /**
@@ -23,10 +25,7 @@ public class WipeThemOut extends ApplicationAdapter {
 	
 	private OrthographicCamera _cam;
 	
-	private Gamepad _padP1;
-	
-	private Vector2 _p1 = new Vector2(0, 0);
-	private Vector2 _p1Target = new Vector2(0, 0);
+	private Player _player1;
 	
 	private List<Vector2> _bullets = new ArrayList<Vector2>();
 	private List<Vector2> _bulletsSpeed = new ArrayList<Vector2>();
@@ -43,8 +42,10 @@ public class WipeThemOut extends ApplicationAdapter {
 		_cam = new OrthographicCamera();
 		
 		if(Controllers.getControllers().size > 0) {
-			_padP1 = new Gamepad(Controllers.getControllers().first());
-			Controllers.addListener(_padP1);
+			Gamepad pad = new Gamepad(Controllers.getControllers().first());
+			Controllers.addListener(pad);
+			
+			_player1 = new Player(pad);
 		}
 	}
 
@@ -56,25 +57,31 @@ public class WipeThemOut extends ApplicationAdapter {
 		Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
-		Vector2 left = _padP1.getLeftStick();
-		Vector2 right = _padP1.getRightStick();
+		float deltaTime = Gdx.graphics.getDeltaTime();
 		
-		Vector2 dir = left.nor().scl(_speed * Gdx.graphics.getDeltaTime());
-		_p1 = _p1.add(dir);
-		
-		Vector2 tar = right.nor().scl(50);
-		_p1Target = tar.add(_p1);
+		// update logic
+		_player1.update(deltaTime);
 		
 		
-		if(_bulletTimer > _bulletDelay) {
-			if(!_p1.epsilonEquals(_p1Target, 0.1f)) {
-				_bullets.add(new Vector2(_p1));
-				_bulletsSpeed.add(new Vector2().add(_p1Target).sub(_p1).nor().scl(400));
-			}
-			_bulletTimer = 0f;
-		} else {
-			_bulletTimer += Gdx.graphics.getDeltaTime();
-		}
+		// draw entities
+		SpriteBatch batch = new SpriteBatch();
+		batch.setProjectionMatrix(_cam.combined);
+		batch.begin();
+		_player1.draw(batch);
+		batch.end();
+		batch.dispose();
+		
+		
+		
+//		if(_bulletTimer > _bulletDelay) {
+//			if(!_p1.epsilonEquals(_p1Target, 0.1f)) {
+//				_bullets.add(new Vector2(_p1));
+//				_bulletsSpeed.add(new Vector2().add(_p1Target).sub(_p1).nor().scl(400));
+//			}
+//			_bulletTimer = 0f;
+//		} else {
+//			_bulletTimer += Gdx.graphics.getDeltaTime();
+//		}
 		
 		
 		
@@ -82,16 +89,7 @@ public class WipeThemOut extends ApplicationAdapter {
 		sr.setProjectionMatrix(_cam.combined);
 		
 		
-		// draw player
-		sr.begin(ShapeType.Filled);
-		sr.setColor(Color.YELLOW);
-		sr.circle(_p1.x, _p1.y, 10);
-		sr.end();
-		sr.begin(ShapeType.Line);
-		sr.setColor(Color.BLACK);
-		dir.nor().scl(10).add(_p1);
-		sr.line(_p1.x, _p1.y, dir.x, dir.y);
-		sr.end();
+		
 		
 		
 		// draw bullets
@@ -115,15 +113,6 @@ public class WipeThemOut extends ApplicationAdapter {
 		}
 		sr.end();
 		
-		
-		// draw target
-		if(!_p1.epsilonEquals(_p1Target, 0.1f)) {
-			sr.begin(ShapeType.Line);
-			sr.setColor(Color.RED);
-			sr.line(_p1Target.x - 5, _p1Target.y, _p1Target.x + 5, _p1Target.y);
-			sr.line(_p1Target.x, _p1Target.y - 5, _p1Target.x, _p1Target.y + 5);
-			sr.end();
-		}
 		
 		
 		// draw debug
