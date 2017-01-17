@@ -44,12 +44,19 @@ public class Player {
 	private float _crossDistance = 50;
 	
 	
+	// BULLETS
+	private float _bulletTimer = 0f;
+	private float _bulletDelay = 0.2f;
+	private float _bulletSpeed = 500f;
+	private Bullets _bullets;
+	
+	
 	/**
 	 * <p>TODO: a new Player-instance</p>
 	 * @param pad
 	 */
-	public Player(Gamepad pad) {
-		this(pad, new Vector2(), new Vector2(1, 0));
+	public Player(Gamepad pad, Bullets bullets) {
+		this(pad, bullets, new Vector2(), new Vector2(1, 0));
 	}
 	
 	/**
@@ -58,8 +65,9 @@ public class Player {
 	 * @param pos
 	 * @param lookat
 	 */
-	public Player(Gamepad pad, Vector2 pos, Vector2 lookat) {
+	public Player(Gamepad pad, Bullets bullets, Vector2 pos, Vector2 lookat) {
 		_pad = pad;
+		_bullets = bullets;
 		_pos = pos.cpy();
 		_lookat = lookat.cpy();
 	}
@@ -85,6 +93,16 @@ public class Player {
 		if(!_pos.epsilonEquals(_cross, EQUALDIFF)) {
 			_lookat = right.cpy();
 		}
+		
+		// fire!
+		if(_bulletTimer > _bulletDelay) {
+			if(!_pos.epsilonEquals(_cross, EQUALDIFF)) {
+				_bullets.add(_pos.cpy(), _cross.cpy().sub(_pos).nor().scl(_bulletSpeed));
+			}
+			_bulletTimer = 0f;
+		} else {
+			_bulletTimer += dt;
+		}
 	}
 	
 	/**
@@ -108,7 +126,7 @@ public class Player {
 		
 		sr.setColor(Color.YELLOW);
 		Vector2 c = new Vector2(_lookat).scl(50).add(_pos);
-		sr.circle(c.x, c.y, 10);
+		sr.circle(c.x, c.y, 7);
 		sr.end();
 		
 		// draw target cross

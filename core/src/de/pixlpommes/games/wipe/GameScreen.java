@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
+import de.pixlpommes.games.wipe.entities.Bullets;
 import de.pixlpommes.games.wipe.entities.Player;
 import de.pixlpommes.libgdx.gamepad.Gamepad;
 
@@ -37,6 +38,8 @@ public class GameScreen implements Screen {
 	/** all active players */
 	private Player[] _players;
 	
+	private Bullets _bullets;
+	
 	/**
 	 * <p>TODO: a new GameScreen-instance</p>
 	 */
@@ -48,11 +51,13 @@ public class GameScreen implements Screen {
 		// TODO: setup players and their input
 		_players = new Player[1];
 		
+		_bullets = new Bullets();
+		
 		if(Controllers.getControllers().size > 0) {
 			Gamepad pad = new Gamepad(Controllers.getControllers().first());
 			Controllers.addListener(pad);
 			
-			_players[0] = new Player(pad);
+			_players[0] = new Player(pad, _bullets);
 		}
 		
 		// TODO: setup arena
@@ -72,10 +77,12 @@ public class GameScreen implements Screen {
         // update logic
         if(_isRunning) {
 	 		for(Player p : _players) {
+	 			// update position
 	 			p.update(delta);
 	 			
+	 			// check for collision with arena walls
 	 			if(p.getPosition().len() + p.getRadius() > _arena.z) {
-	 				Gdx.app.log("GameScreen:Player", "out of arena");
+	 				Gdx.app.log("GameScreen:Player", "hit arena wall");
 	 				
 	 				Vector2 pos = new Vector2(p.getPosition());
 	 				pos.nor().scl(_arena.z - p.getRadius());
@@ -83,11 +90,16 @@ public class GameScreen implements Screen {
 	 				p.setPosition(pos);
 	 			}
 	 		}
+	 		
+	 		_bullets.update(delta);
+	 		
+	 		
         }
  		
 		// draw entities
 		for(Player p : _players)
 			p.draw(_batch);
+		_bullets.draw(_batch);
 		
 		// draw arena
 		ShapeRenderer sr = new ShapeRenderer();
