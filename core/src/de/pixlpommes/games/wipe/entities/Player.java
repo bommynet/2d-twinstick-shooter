@@ -45,9 +45,16 @@ public class Player {
 	
 	
 	// BULLETS
+	/** current timer for next bullet to spawn */
 	private float _bulletTimer = 0f;
-	private float _bulletDelay = 0.2f;
-	private float _bulletSpeed = 500f;
+	
+	/** interval to spawn new bullets */
+	private float _bulletDelay = 0.1f;
+	
+	/** bullet moving speed */
+	private float _bulletSpeed = 600f;
+	
+	/** bullet manager */
 	private Bullets _bullets;
 	
 	
@@ -142,13 +149,14 @@ public class Player {
 	}
 	
 	/**
-	 * @return
+	 * @return current player position
 	 */
 	public Vector2 getPosition() {
 		return _pos;
 	}
 	
 	/**
+	 * <p>Sets player to new position.</p>
 	 * @param pos
 	 */
 	public void setPosition(Vector2 pos) {
@@ -156,10 +164,8 @@ public class Player {
 		_pos = pos;
 	}
 	
-
-	
 	/**
-	 * @return
+	 * @return size of the player as radius of a circle
 	 */
 	public float getRadius() {
 		return 10f;

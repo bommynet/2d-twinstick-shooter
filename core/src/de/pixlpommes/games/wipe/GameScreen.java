@@ -76,6 +76,7 @@ public class GameScreen implements Screen {
         
         // update logic
         if(_isRunning) {
+        	// update player
 	 		for(Player p : _players) {
 	 			// update position
 	 			p.update(delta);
@@ -91,9 +92,19 @@ public class GameScreen implements Screen {
 	 			}
 	 		}
 	 		
+	 		// update bullets
 	 		_bullets.update(delta);
 	 		
-	 		
+	 		// check for collision with arena walls
+	 		for(int i = _bullets.size() - 1; i >= 0; i--) {
+	 			if(_bullets.get(i).len() + Bullets.RADIUS > _arena.z) {
+	 				// remove bullet
+	 				Vector2 b = _bullets.kill(i);
+	 				
+	 				// TODO: add explosion
+	 				Gdx.app.log("GameScreen:Explosion@", b.toString());
+	 			}
+	 		}
         }
  		
 		// draw entities
