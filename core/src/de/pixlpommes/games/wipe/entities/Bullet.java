@@ -16,17 +16,21 @@ public class Bullet {
 	// TODO: differentiate between player and enemy bullets?
 	// TODO: differentiate between player1 and player2 bullets?
 	
+	/** bullet position */
 	private Vector2 _pos;
 	
+	/** bullet size */
 	private float _radius;
 	
+	/** bullet speed and direction */
 	private Vector2 _speed;
 	
+	/** flag, if bullet is alive or can be removed */
 	private boolean _isAlive;
 	
 	
 	/**
-	 * <p>TODO: a new Bullet-instance</p>
+	 * <p>Create a new bullet.</p>
 	 * @param position
 	 * @param speed
 	 * @param radius
@@ -40,7 +44,7 @@ public class Bullet {
 	}
 	
 	/**
-	 * <p>TODO: a new Bullet-instance</p>
+	 * <p>Create a new bullet.</p>
 	 * @param position
 	 * @param speed
 	 */
@@ -50,6 +54,7 @@ public class Bullet {
 	
 	
 	/**
+	 * Update position.
 	 * @param delta
 	 */
 	public void update(float delta) {
@@ -59,6 +64,7 @@ public class Bullet {
 	}
 	
 	/**
+	 * Draw bullet.
 	 * @param batch
 	 */
 	public void draw(Batch batch) {
@@ -74,18 +80,21 @@ public class Bullet {
 	}
 	
 	/**
-	 * @return
+	 * @return the bullets position
 	 */
 	public Vector2 getPosition() {
 		return _pos;
 	}
 	
+	/**
+	 * @return the bullets size
+	 */
 	public float getRadius() {
 		return _radius;
 	}
 	
 	/**
-	 * 
+	 * Marks this bullet as killed/removable.
 	 */
 	public Vector2 kill() {
 		_isAlive = false;
@@ -93,14 +102,7 @@ public class Bullet {
 	}
 	
 	/**
-	 * @return
-	 */
-	public boolean isAlive() {
-		return _isAlive;
-	}
-	
-	/**
-	 * @return
+	 * @return true, if bullet was killed
 	 */
 	public boolean isDead() {
 		return !_isAlive;

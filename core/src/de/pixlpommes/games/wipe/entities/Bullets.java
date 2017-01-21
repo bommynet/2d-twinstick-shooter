@@ -3,14 +3,11 @@ package de.pixlpommes.games.wipe.entities;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 
 /**
- * <p>TODO: description</p>
+ * <p>Manages all bullets on a game screen.</p>
  * 
  * @author Thomas Borck
  */
@@ -21,7 +18,7 @@ public class Bullets {
 	
 	
 	/**
-	 * <p>TODO: a new Bullets-instance</p>
+	 * <p>Creates a new manager.</p>
 	 */
 	public Bullets() {
 		 _bullets = new ArrayList<Bullet>();
@@ -29,8 +26,7 @@ public class Bullets {
 	
 	
 	/**
-	 * <p>Update all bullets.</p>
-	 * 
+	 * <p>Update all existing bullets.</p>
 	 * @param delta
 	 */
 	public void update(float delta) {
@@ -47,7 +43,6 @@ public class Bullets {
 	
 	/**
 	 * <p>Draw all bullets.</p>
-	 * 
 	 * @param batch
 	 */
 	public void draw(Batch batch) {
@@ -83,9 +78,9 @@ public class Bullets {
 	}
 	
 	/**
-	 * <p>Removes a bullet from the game.</p>
+	 * <p>Mark a specific bullet as killed.</p>
 	 * @param index
-	 * @return
+	 * @return position of killed bullet
 	 */
 	public Vector2 kill(int index) {
 		if(index < 0 || index >= size()) return null;
