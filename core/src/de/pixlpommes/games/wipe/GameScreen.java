@@ -1,5 +1,8 @@
 package de.pixlpommes.games.wipe;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controllers;
@@ -42,7 +45,9 @@ public class GameScreen implements Screen {
 	/** TODO: description */
 	private Bullets _bullets;
 	
-	private Enemy _enemy;
+	private List<Enemy> _enemies;
+	private float _enemySpawnTimer = 0f;
+	private float _enemySpawnDelay = 1f;
 	
 	/**
 	 * <p>TODO: a new GameScreen-instance</p>
@@ -67,8 +72,7 @@ public class GameScreen implements Screen {
 		// TODO: setup arena
 		_arena = new Vector3(0, 0, 375);
 		
-		_enemy = new Enemy(_players[0]);
-		_enemy.spawn(new Vector2(100, 100));
+		_enemies = new ArrayList<Enemy>();
 	}
 	
 	/* (non-Javadoc)
@@ -102,8 +106,22 @@ public class GameScreen implements Screen {
 	 		// update bullets
 	 		_bullets.update(delta);
 	 		
+	 		
 	 		// update enemies
-	 		_enemy.update(delta);
+	 		for(Enemy e : _enemies)
+	 			e.update(delta);
+	 		
+	 		// spawn new enemies
+	 		if(_enemySpawnTimer > _enemySpawnDelay) {
+	 			Enemy e = new Enemy(_players[0]);
+	 			e.spawn(_arena);
+	 			_enemies.add(e);
+	 			
+	 			_enemySpawnTimer = 0f;
+	 		} else {
+	 			_enemySpawnTimer += delta;
+	 		}
+	 		
 	 		
 	 		// check for collision with arena walls
 	 		for(int i = _bullets.size() - 1; i >= 0; i--) {
@@ -125,7 +143,8 @@ public class GameScreen implements Screen {
 		_bullets.draw(_batch);
 		
 		// draw enemies
-		_enemy.draw(_batch);
+		for(Enemy e : _enemies)
+			e.draw(_batch);
 		
 		// draw arena
 		ShapeRenderer sr = new ShapeRenderer();

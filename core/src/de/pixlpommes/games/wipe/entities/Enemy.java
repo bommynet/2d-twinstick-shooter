@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 /**
  * <p>A basic enemy.</p>
@@ -55,6 +56,24 @@ public class Enemy {
 		_isSpawned = false;
 	}
 	
+	
+	/**
+	 * @param arena
+	 */
+	public void spawn(Vector3 arena) {
+		// choose random direction
+		Vector2 direction = new Vector2(
+				(float)(Math.random()*2 - 1),
+				(float)(Math.random()*2 - 1));
+		direction.nor();
+		
+		// choose random distance (50% of arena, 100% of arena)
+		float length = (float)Math.random()*arena.z/2 + arena.z/2;
+		
+		// spawn at random position
+		_pos = direction.scl(length);
+		_isSpawned = true;
+	}
 	
 	/**
 	 * @param spawn
