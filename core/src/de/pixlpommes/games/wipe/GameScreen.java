@@ -97,7 +97,9 @@ public class GameScreen implements Screen {
 	 		
 	 		// check for collision with arena walls
 	 		for(int i = _bullets.size() - 1; i >= 0; i--) {
-	 			if(_bullets.get(i).len() + Bullets.RADIUS > _arena.z) {
+	 			float len = _bullets.get(i).getPosition().len();
+	 			float radius = _bullets.get(i).getRadius();
+	 			if(len + radius > _arena.z) {
 	 				// remove bullet
 	 				Vector2 b = _bullets.kill(i);
 	 				
