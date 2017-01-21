@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import de.pixlpommes.games.wipe.entities.Bullets;
+import de.pixlpommes.games.wipe.entities.Enemy;
 import de.pixlpommes.games.wipe.entities.Player;
 import de.pixlpommes.libgdx.gamepad.Gamepad;
 
@@ -38,7 +39,10 @@ public class GameScreen implements Screen {
 	/** all active players */
 	private Player[] _players;
 	
+	/** TODO: description */
 	private Bullets _bullets;
+	
+	private Enemy _enemy;
 	
 	/**
 	 * <p>TODO: a new GameScreen-instance</p>
@@ -62,6 +66,9 @@ public class GameScreen implements Screen {
 		
 		// TODO: setup arena
 		_arena = new Vector3(0, 0, 375);
+		
+		_enemy = new Enemy(_players[0]);
+		_enemy.spawn(new Vector2(100, 100));
 	}
 	
 	/* (non-Javadoc)
@@ -95,6 +102,9 @@ public class GameScreen implements Screen {
 	 		// update bullets
 	 		_bullets.update(delta);
 	 		
+	 		// update enemies
+	 		_enemy.update(delta);
+	 		
 	 		// check for collision with arena walls
 	 		for(int i = _bullets.size() - 1; i >= 0; i--) {
 	 			float len = _bullets.get(i).getPosition().len();
@@ -104,15 +114,18 @@ public class GameScreen implements Screen {
 	 				Vector2 b = _bullets.kill(i);
 	 				
 	 				// TODO: add explosion
-	 				Gdx.app.log("GameScreen:Explosion@", b.toString());
+	 				Gdx.app.log("GameScreen:Bullet:Explosion@", b.toString());
 	 			}
 	 		}
         }
  		
-		// draw entities
+		// draw players
 		for(Player p : _players)
 			p.draw(_batch);
 		_bullets.draw(_batch);
+		
+		// draw enemies
+		_enemy.draw(_batch);
 		
 		// draw arena
 		ShapeRenderer sr = new ShapeRenderer();
