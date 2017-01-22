@@ -1,5 +1,8 @@
 package de.pixlpommes.games.wipe;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controllers;
@@ -50,6 +53,8 @@ public class GameScreen implements Screen {
 	private float _enemySpawnTimer = 0f;
 	private float _enemySpawnDelay = 1f;
 	
+	private List<Vector3> _explosions;
+	
 	
 	// EFFECTS
 	/** TODO: description */
@@ -86,6 +91,8 @@ public class GameScreen implements Screen {
 		_arena = new Vector3(0, 0, 375);
 		
 		_enemies = new Enemies(_arena);
+		
+		_explosions = new ArrayList<Vector3>();
 	}
 	
 	/* (non-Javadoc)
@@ -126,7 +133,9 @@ public class GameScreen implements Screen {
 	 			float radius = b.getRadius();
 	 			
 	 			if(len + radius > _arena.z) {
-	 				b.kill();
+	 				Vector2 a = b.kill();
+	 				Vector3 ex = new Vector3(a.x, a.y, 50);
+	 				_explosions.add(ex);
 	 			}
 	 		}
 	 		
@@ -141,16 +150,20 @@ public class GameScreen implements Screen {
 	 			if(!e.isMoving()) continue;
 	 			
 	 			for(Bullet b : _bullets.get()) {
-	 				Vector2 a = e.getPosition().cpy().sub(b.getPosition());
-	 				float len = a.len();
+	 				Vector2 dist = e.getPosition().cpy().sub(b.getPosition());
+	 				float len = dist.len();
 	 				float lenCollision = e.getRadius() + b.getRadius();
 	 				
 	 				if(len <= lenCollision) {
 	 					Gdx.app.log("Collision", "Enemy <-> Bullet");
 	 					
 	 					// kill both entities
-	 					e.kill();
-	 					b.kill();
+	 					e.hit();
+	 					Vector2 a = b.kill();
+
+	 					// add explosion
+		 				Vector3 ex = new Vector3(a.x, a.y, 50);
+		 				_explosions.add(ex);
 	 					
 	 					// add effekt 'sleep' for each kill
 	 					sleep();
@@ -159,6 +172,16 @@ public class GameScreen implements Screen {
 	 					break;
 	 				}
 	 			}
+	 		}
+	 		
+	 		
+	 		// update explosions
+	 		for(int i = _explosions.size()-1; i >= 0; i--) {
+	 			if(_explosions.get(i).z < 10) {
+	 				_explosions.remove(i);
+	 				continue;
+	 			}
+	 			_explosions.get(i).z *= 0.9;
 	 		}
 	 		
 	 		
@@ -194,6 +217,19 @@ public class GameScreen implements Screen {
 		sr.setColor(Color.RED);
 		sr.circle(_arena.x, _arena.y, _arena.z);
 		sr.end();
+		
+			sr.begin(ShapeType.Filled);
+			// draw explosions
+			for(Vector3 v : _explosions) {
+				if(v.z > 40)
+					sr.setColor(Color.DARK_GRAY);
+				else
+					sr.setColor(Color.WHITE);
+				
+				sr.circle(v.x, v.y, v.z);
+			}
+			sr.end();
+		
 		sr.dispose();
     }
 

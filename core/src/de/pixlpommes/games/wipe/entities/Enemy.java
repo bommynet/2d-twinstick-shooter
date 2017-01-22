@@ -1,5 +1,6 @@
 package de.pixlpommes.games.wipe.entities;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -13,6 +14,8 @@ import com.badlogic.gdx.math.Vector3;
  * @author Thomas Borck
  */
 public class Enemy {
+	
+	protected int _life;
 	
 	// ENEMY
 	/** enemies position */
@@ -59,6 +62,8 @@ public class Enemy {
 	 */
 	public Enemy(Player player) {
 		_player = player;
+		
+		_life = 2;
 		
 		_pos = new Vector2(0, 0);
 		_vel = new Vector2(0, 0);
@@ -151,13 +156,20 @@ public class Enemy {
 		}
 	}
 	
-	/**
-	 * Kills this enemy.
-	 * @return last position of the enemy
-	 */
-	public Vector2 kill() {
-		_isAlive = false;
-		return _pos;
+//	/**
+//	 * Kills this enemy.
+//	 * @return last position of the enemy
+//	 */
+//	public Vector2 kill() {
+//		_isAlive = false;
+//		return _pos;
+//	}
+	
+	public void hit() {
+		_life--;
+		
+		if(_life <= 0)
+			_isAlive = false;
 	}
 	
 	/**
