@@ -50,10 +50,22 @@ public class GameScreen implements Screen {
 	private float _enemySpawnTimer = 0f;
 	private float _enemySpawnDelay = 1f;
 	
+	
+	// EFFECTS
+	/** TODO: description */
+	private float _sleeping;
+	
+	private boolean _isSleeping;
+	
+	
 	/**
 	 * <p>TODO: a new GameScreen-instance</p>
 	 */
 	public GameScreen() {
+		// setup effects
+		_sleeping = 0f;
+		_isSleeping = false;
+		
 		// setup graphics
 		_cam = new OrthographicCamera();
 		_batch = new SpriteBatch();
@@ -87,7 +99,7 @@ public class GameScreen implements Screen {
         //Gdx.app.log("GameScreen->delta", ""+delta);
         
         // update logic
-        if(_isRunning) {
+        if(_isRunning && !_isSleeping) {
         	// update player
 	 		for(Player p : _players) {
 	 			// update position
@@ -109,15 +121,12 @@ public class GameScreen implements Screen {
 	 		_bullets.update(delta);
 	 		
 	 		// check for collision between bullets and arena
-	 		for(int i = _bullets.size() - 1; i >= 0; i--) {
-	 			float len = _bullets.get(i).getPosition().len();
-	 			float radius = _bullets.get(i).getRadius();
+	 		for(Bullet b : _bullets.get()) {
+	 			float len = b.getPosition().len();
+	 			float radius = b.getRadius();
+	 			
 	 			if(len + radius > _arena.z) {
-	 				// remove bullet
-	 				Vector2 b = _bullets.kill(i);
-	 				
-	 				// TODO: add explosion
-	 				//Gdx.app.log("GameScreen:Bullet:Explosion@", b.toString());
+	 				b.kill();
 	 			}
 	 		}
 	 		
@@ -143,6 +152,9 @@ public class GameScreen implements Screen {
 	 					e.kill();
 	 					b.kill();
 	 					
+	 					// add effekt 'sleep' for each kill
+	 					sleep();
+	 					
 	 					// leave inner loop
 	 					break;
 	 				}
@@ -157,9 +169,14 @@ public class GameScreen implements Screen {
 	 		} else {
 	 			_enemySpawnTimer += delta;
 	 		}
-	 		
-	 		
-	 		
+        }
+        // do a little 'sleep'
+        else if(_isSleeping) {
+        	if(_sleeping > 0) {
+        		_sleeping -= delta;
+        	} else {
+        		_isSleeping = false;
+        	}
         }
  		
 		// draw players
@@ -173,8 +190,6 @@ public class GameScreen implements Screen {
 		// draw arena
 		ShapeRenderer sr = new ShapeRenderer();
 		sr.setProjectionMatrix(_batch.getProjectionMatrix());
-		
-		// draw player
 		sr.begin(ShapeType.Line);
 		sr.setColor(Color.RED);
 		sr.circle(_arena.x, _arena.y, _arena.z);
@@ -247,4 +262,11 @@ public class GameScreen implements Screen {
     	Gdx.app.log("GameScreen", "dispose called");
     }
 
+    /**
+     * 
+     */
+    private void sleep() {
+    	_sleeping = 0.02f;
+    	_isSleeping = true;
+    }
 }
