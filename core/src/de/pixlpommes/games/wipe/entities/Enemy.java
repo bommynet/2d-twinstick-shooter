@@ -35,6 +35,10 @@ public class Enemy {
 	/** flag, if enemy is spawned already */
 	protected boolean _isSpawned;
 	
+	/** flag, if enemy is 'landed' and moves towards the player */
+	protected boolean _isMoving;
+	
+	/** time between spawning and landing on the ground */
 	protected float _spawnDelay;
 	
 	
@@ -53,7 +57,11 @@ public class Enemy {
 		_pos = new Vector2(0, 0);
 		_vel = new Vector2(0, 0);
 		_acc = new Vector2(0, 0);
+		
 		_isSpawned = false;
+		_isMoving = false;
+		
+		_spawnDelay = 1f;
 	}
 	
 	
@@ -95,19 +103,29 @@ public class Enemy {
 	 * @param delta
 	 */
 	public void update(float delta) {
-		// steering (seek)
-		Vector2 desired = _player.getPosition().cpy().sub(_pos);
-		desired.nor().scl(_maxspeed * delta);
-		
-		Vector2 steer = desired.cpy().sub(_vel);
-		steer.limit(_maxforce);
-		
-		applyForce(steer);
-		
-		// standard 'moveable' operations
-		_vel.add(_acc);
-		_acc.setZero();
-		_pos.add(_vel);
+		// update position if enemy is spawned and on the ground
+		if(_isSpawned && _isMoving) {
+			// steering (seek)
+			Vector2 desired = _player.getPosition().cpy().sub(_pos);
+			desired.nor().scl(_maxspeed * delta);
+			
+			Vector2 steer = desired.cpy().sub(_vel);
+			steer.limit(_maxforce);
+			
+			applyForce(steer);
+			
+			// standard 'moveable' operations
+			_vel.add(_acc);
+			_acc.setZero();
+			_pos.add(_vel);
+		} 
+		// update falling in
+		else if(_isSpawned && !_isMoving) {
+			if(_spawnDelay > 0)
+				_spawnDelay -= delta;
+			else
+				_isMoving = true;
+		}
 	}
 	
 	/**
@@ -121,7 +139,11 @@ public class Enemy {
 			// draw enemy
 			sr.begin(ShapeType.Filled);
 			
-			sr.setColor(Color.RED);
+			if(_isMoving)
+				sr.setColor(Color.RED);
+			else
+				sr.setColor(Color.DARK_GRAY);
+			
 			sr.circle(_pos.x, _pos.y, 10);
 			
 			sr.end();
