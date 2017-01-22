@@ -1,7 +1,6 @@
 package de.pixlpommes.games.wipe;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -16,6 +15,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import de.pixlpommes.games.wipe.entities.Bullets;
+import de.pixlpommes.games.wipe.entities.Enemies;
 import de.pixlpommes.games.wipe.entities.Enemy;
 import de.pixlpommes.games.wipe.entities.Player;
 import de.pixlpommes.libgdx.gamepad.Gamepad;
@@ -45,7 +45,9 @@ public class GameScreen implements Screen {
 	/** TODO: description */
 	private Bullets _bullets;
 	
-	private List<Enemy> _enemies;
+	/** TODO: description */
+	private Enemies _enemies;
+	
 	private float _enemySpawnTimer = 0f;
 	private float _enemySpawnDelay = 1f;
 	
@@ -72,7 +74,7 @@ public class GameScreen implements Screen {
 		// TODO: setup arena
 		_arena = new Vector3(0, 0, 375);
 		
-		_enemies = new ArrayList<Enemy>();
+		_enemies = new Enemies(_arena);
 	}
 	
 	/* (non-Javadoc)
@@ -108,15 +110,11 @@ public class GameScreen implements Screen {
 	 		
 	 		
 	 		// update enemies
-	 		for(Enemy e : _enemies)
-	 			e.update(delta);
+	 		_enemies.update(delta);
 	 		
 	 		// spawn new enemies
 	 		if(_enemySpawnTimer > _enemySpawnDelay) {
-	 			Enemy e = new Enemy(_players[0]);
-	 			e.spawn(_arena);
-	 			_enemies.add(e);
-	 			
+	 			_enemies.add(_players[0]);
 	 			_enemySpawnTimer = 0f;
 	 		} else {
 	 			_enemySpawnTimer += delta;
@@ -143,8 +141,7 @@ public class GameScreen implements Screen {
 		_bullets.draw(_batch);
 		
 		// draw enemies
-		for(Enemy e : _enemies)
-			e.draw(_batch);
+		_enemies.draw(_batch);
 		
 		// draw arena
 		ShapeRenderer sr = new ShapeRenderer();

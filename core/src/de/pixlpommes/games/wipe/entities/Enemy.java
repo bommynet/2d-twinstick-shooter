@@ -1,5 +1,6 @@
 package de.pixlpommes.games.wipe.entities;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -24,6 +25,9 @@ public class Enemy {
 	/** enemies acceleration */
 	protected Vector2 _acc;
 	
+	/** enemies size */
+	protected float _radius;
+	
 	/** enemies maximum moving speed */
 	protected float _maxspeed = 150;
 	
@@ -41,6 +45,9 @@ public class Enemy {
 	/** time between spawning and landing on the ground */
 	protected float _spawnDelay;
 	
+	/** is enemy alive */
+	protected boolean _isAlive;
+	
 	
 	// PLAYER
 	/** for pathfinding the enemy need to know players position */
@@ -57,9 +64,11 @@ public class Enemy {
 		_pos = new Vector2(0, 0);
 		_vel = new Vector2(0, 0);
 		_acc = new Vector2(0, 0);
+		_radius = 10f;
 		
 		_isSpawned = false;
 		_isMoving = false;
+		_isAlive = true;
 		
 		_spawnDelay = 1f;
 	}
@@ -81,14 +90,8 @@ public class Enemy {
 		// spawn at random position
 		_pos = direction.scl(length);
 		_isSpawned = true;
-	}
-	
-	/**
-	 * @param spawn
-	 */
-	public void spawn(Vector2 spawn) {
-		_pos = new Vector2(spawn);
-		_isSpawned = true;
+		
+		Gdx.app.log("Enemy:(spawned,moving)", "("+_isSpawned+","+_isMoving+")");
 	}
 	
 	/**
@@ -144,10 +147,26 @@ public class Enemy {
 			else
 				sr.setColor(Color.DARK_GRAY);
 			
-			sr.circle(_pos.x, _pos.y, 10);
+			sr.circle(_pos.x, _pos.y, _radius);
 			
 			sr.end();
 			sr.dispose();
 		}
+	}
+	
+	/**
+	 * Kills this enemy.
+	 * @return last position of the enemy
+	 */
+	public Vector2 kill() {
+		_isAlive = false;
+		return _pos;
+	}
+	
+	/**
+	 * @return enemy is dead
+	 */
+	public boolean isDead() {
+		return !_isAlive;
 	}
 }
