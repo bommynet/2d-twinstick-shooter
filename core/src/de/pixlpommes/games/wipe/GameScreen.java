@@ -13,10 +13,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import de.pixlpommes.games.wipe.entities.Bullet;
-import de.pixlpommes.games.wipe.entities.Bullets;
-import de.pixlpommes.games.wipe.entities.Enemies;
 import de.pixlpommes.games.wipe.entities.Enemy;
 import de.pixlpommes.games.wipe.entities.Player;
+import de.pixlpommes.games.wipe.manager.Bullets;
+import de.pixlpommes.games.wipe.manager.Enemies;
 import de.pixlpommes.libgdx.gamepad.Gamepad;
 
 /**

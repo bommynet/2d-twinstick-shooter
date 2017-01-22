@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 
+import de.pixlpommes.games.wipe.manager.Bullets;
 import de.pixlpommes.libgdx.gamepad.Gamepad;
 
 /**

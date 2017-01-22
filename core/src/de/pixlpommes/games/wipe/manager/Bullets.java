@@ -1,10 +1,12 @@
-package de.pixlpommes.games.wipe.entities;
+package de.pixlpommes.games.wipe.manager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
+
+import de.pixlpommes.games.wipe.entities.Bullet;
 
 /**
  * <p>Manages all bullets on a game screen.</p>
