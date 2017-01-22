@@ -71,6 +71,13 @@ public class Bullets {
 	}
 	
 	/**
+	 * @return
+	 */
+	public List<Bullet> get() {
+		return _bullets;
+	}
+	
+	/**
 	 * @return amount of existing bullets
 	 */
 	public int size() {

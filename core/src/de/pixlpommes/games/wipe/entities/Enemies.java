@@ -79,4 +79,11 @@ public class Enemies {
 	public Enemy get(int index) {
 		return _enemies.get(index);
 	}
+	
+	/**
+	 * @return
+	 */
+	public List<Enemy> get() {
+		return _enemies;
+	}
 }

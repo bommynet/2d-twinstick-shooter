@@ -90,8 +90,6 @@ public class Enemy {
 		// spawn at random position
 		_pos = direction.scl(length);
 		_isSpawned = true;
-		
-		Gdx.app.log("Enemy:(spawned,moving)", "("+_isSpawned+","+_isMoving+")");
 	}
 	
 	/**
@@ -168,5 +166,28 @@ public class Enemy {
 	 */
 	public boolean isDead() {
 		return !_isAlive;
+	}
+	
+	/**
+	 * @return enemy is spawned and moving
+	 */
+	public boolean isMoving() {
+		/* checking 'isMoving' would be enough...check
+		 * 'isSpawned' just to be sure */
+		return _isSpawned && _isMoving;
+	}
+	
+	/**
+	 * @return
+	 */
+	public Vector2 getPosition() {
+		return _pos;
+	}
+	
+	/**
+	 * @return
+	 */
+	public float getRadius() {
+		return _radius;
 	}
 }

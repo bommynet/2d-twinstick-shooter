@@ -1,7 +1,5 @@
 package de.pixlpommes.games.wipe;
 
-import java.util.ArrayList;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controllers;
@@ -14,6 +12,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
+import de.pixlpommes.games.wipe.entities.Bullet;
 import de.pixlpommes.games.wipe.entities.Bullets;
 import de.pixlpommes.games.wipe.entities.Enemies;
 import de.pixlpommes.games.wipe.entities.Enemy;
@@ -105,12 +104,51 @@ public class GameScreen implements Screen {
 	 			}
 	 		}
 	 		
+	 		
 	 		// update bullets
 	 		_bullets.update(delta);
+	 		
+	 		// check for collision between bullets and arena
+	 		for(int i = _bullets.size() - 1; i >= 0; i--) {
+	 			float len = _bullets.get(i).getPosition().len();
+	 			float radius = _bullets.get(i).getRadius();
+	 			if(len + radius > _arena.z) {
+	 				// remove bullet
+	 				Vector2 b = _bullets.kill(i);
+	 				
+	 				// TODO: add explosion
+	 				//Gdx.app.log("GameScreen:Bullet:Explosion@", b.toString());
+	 			}
+	 		}
 	 		
 	 		
 	 		// update enemies
 	 		_enemies.update(delta);
+	 		
+	 		
+	 		// check for collision between enemies and bullets
+	 		for(Enemy e : _enemies.get()) {
+	 			// only check complete spawned enemies (moving ones)
+	 			if(!e.isMoving()) continue;
+	 			
+	 			for(Bullet b : _bullets.get()) {
+	 				Vector2 a = e.getPosition().cpy().sub(b.getPosition());
+	 				float len = a.len();
+	 				float lenCollision = e.getRadius() + b.getRadius();
+	 				
+	 				if(len <= lenCollision) {
+	 					Gdx.app.log("Collision", "Enemy <-> Bullet");
+	 					
+	 					// kill both entities
+	 					e.kill();
+	 					b.kill();
+	 					
+	 					// leave inner loop
+	 					break;
+	 				}
+	 			}
+	 		}
+	 		
 	 		
 	 		// spawn new enemies
 	 		if(_enemySpawnTimer > _enemySpawnDelay) {
@@ -121,18 +159,7 @@ public class GameScreen implements Screen {
 	 		}
 	 		
 	 		
-	 		// check for collision with arena walls
-	 		for(int i = _bullets.size() - 1; i >= 0; i--) {
-	 			float len = _bullets.get(i).getPosition().len();
-	 			float radius = _bullets.get(i).getRadius();
-	 			if(len + radius > _arena.z) {
-	 				// remove bullet
-	 				Vector2 b = _bullets.kill(i);
-	 				
-	 				// TODO: add explosion
-	 				Gdx.app.log("GameScreen:Bullet:Explosion@", b.toString());
-	 			}
-	 		}
+	 		
         }
  		
 		// draw players
