@@ -33,6 +33,9 @@ public class Player {
 	/** players face direction */
 	private Vector2 _lookat = new Vector2(1, 0);
 	
+	/** players size */
+	private float _radius = 20f;
+	
 	/** player moving speed */
 	private float _speed = 300;
 	
@@ -125,7 +128,7 @@ public class Player {
 		// draw player
 		sr.begin(ShapeType.Filled);
 		sr.setColor(Color.YELLOW);
-		sr.circle(_pos.x, _pos.y, 10);
+		sr.circle(_pos.x, _pos.y, _radius);
 		sr.end();
 		sr.begin(ShapeType.Line);
 		sr.setColor(Color.BLACK);
@@ -133,8 +136,8 @@ public class Player {
 		sr.line(_pos.x, _pos.y, marker.x, marker.y);
 		
 		sr.setColor(Color.YELLOW);
-		Vector2 c = new Vector2(_lookat).scl(50).add(_pos);
-		sr.circle(c.x, c.y, 7);
+		Vector2 c = new Vector2(_lookat).scl(2*_radius).add(_pos);
+		sr.circle(c.x, c.y, _radius*0.75f);
 		sr.end();
 		
 		// draw target cross
@@ -169,6 +172,6 @@ public class Player {
 	 * @return size of the player as radius of a circle
 	 */
 	public float getRadius() {
-		return 10f;
+		return _radius;
 	}
 }

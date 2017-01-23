@@ -68,7 +68,7 @@ public class Enemy {
 		_pos = new Vector2(0, 0);
 		_vel = new Vector2(0, 0);
 		_acc = new Vector2(0, 0);
-		_radius = 10f;
+		_radius = 15f;
 		
 		_isSpawned = false;
 		_isMoving = false;

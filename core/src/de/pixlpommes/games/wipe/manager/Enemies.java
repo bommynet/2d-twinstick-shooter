@@ -67,13 +67,13 @@ public class Enemies {
 			e.draw(batch);
 	}
 	
-	/**
-	 * @param index
-	 * @return
-	 */
-	public Vector2 kill(int index) {
-		return _enemies.get(index).kill();
-	}
+//	/**
+//	 * @param index
+//	 * @return
+//	 */
+//	public Vector2 kill(int index) {
+//		return _enemies.get(index).kill();
+//	}
 	
 	/**
 	 * @param index

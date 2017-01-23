@@ -59,7 +59,7 @@ public class Bullets {
 	 * @param speed
 	 */
 	public void add(Vector2 pos, Vector2 speed) {
-		Bullet b = new Bullet(pos, speed);
+		Bullet b = new Bullet(pos, speed, 12f);
 		_bullets.add(b);
 	}
 	

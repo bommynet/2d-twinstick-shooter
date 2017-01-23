@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -29,8 +30,11 @@ import de.pixlpommes.libgdx.gamepad.Gamepad;
  */
 public class GameScreen implements Screen {
 	
-	/** flag to pause the game */
+	/** flag, to pause the game (pause and resume) */
 	private boolean _isRunning = false;
+	
+	/** flag, to pause the game (manually by players) */
+	private boolean _isPaused = false;
 	
 	/** arena (as a circle (x,y,r))to play inside */
 	private Vector3 _arena;
@@ -106,7 +110,7 @@ public class GameScreen implements Screen {
         //Gdx.app.log("GameScreen->delta", ""+delta);
         
         // update logic
-        if(_isRunning && !_isSleeping) {
+        if(_isRunning && !_isPaused && !_isSleeping) {
         	// update player
 	 		for(Player p : _players) {
 	 			// update position
@@ -231,6 +235,17 @@ public class GameScreen implements Screen {
 			sr.end();
 		
 		sr.dispose();
+		
+		
+		/// TODO: process by central input class
+		if(Gdx.input.isKeyJustPressed(Keys.SPACE)) {
+			_isPaused = !_isPaused;
+		}
+		
+		// TODO: draw 'pause'-info to screen
+		if(_isPaused) {
+			Gdx.app.log("MainLoop", "isPaused");
+		}
     }
 
     /* (non-Javadoc)
