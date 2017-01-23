@@ -1,6 +1,5 @@
 package de.pixlpommes.games.wipe.entities;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -156,14 +155,14 @@ public class Enemy {
 		}
 	}
 	
-//	/**
-//	 * Kills this enemy.
-//	 * @return last position of the enemy
-//	 */
-//	public Vector2 kill() {
-//		_isAlive = false;
-//		return _pos;
-//	}
+	/**
+	 * Kills this enemy.
+	 * @return last position of the enemy
+	 */
+	public Vector2 kill() {
+		_isAlive = false;
+		return _pos;
+	}
 	
 	public void hit() {
 		_life--;

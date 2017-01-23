@@ -125,6 +125,24 @@ public class GameScreen implements Screen {
 	 				
 	 				p.setPosition(pos);
 	 			}
+	 			
+	 			// check for collision with enemies
+	 			for(Enemy e : _enemies.get()) {
+	 				// ignore inactive enemies
+	 				if(!e.isMoving()) continue;
+	 				
+	 				// calc lengths
+	 				Vector2 dist = p.getPosition().cpy().sub(e.getPosition());
+	 				float lenDist2 = dist.len2();
+	 				float lenRad2 = (float)Math.pow(p.getRadius() + e.getRadius(), 2);
+	 				
+	 				if(lenDist2 <= lenRad2) {
+	 					/// TODO: how to react on 'player got hit'
+	 					/// currently: kill enemy, hit player
+	 					e.kill();
+	 					p.hit();
+	 				}
+	 			}
 	 		}
 	 		
 	 		
