@@ -97,16 +97,52 @@ public class GameScreen implements Screen {
 	 */
 	@Override
     public void render(float delta) {
+		update(delta);
+		draw();
+	}
+	
+	private void draw() {
+		// prepare OpenGL state
 		Gdx.gl.glEnable(GL20.GL_BLEND);
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		
         // clear screen
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        //Gdx.app.log("GameScreen->delta", ""+delta);
         
-        // update logic
-        if(_isRunning && !_isPaused && !_isSleeping) {
+ 		
+        // LAYER 0: background
+        
+        
+        // LAYER 1: arena
+        ShapeRenderer sr = new ShapeRenderer();
+        sr.setProjectionMatrix(_batch.getProjectionMatrix());
+        sr.begin(ShapeType.Line);
+        sr.setColor(Color.RED);
+        sr.circle(_arena.x, _arena.y, _arena.z);
+        sr.end();
+        sr.dispose();
+        
+        
+        // LAYER 5: enemies & bullets
+        _enemies.draw(_batch);
+        _bullets.draw(_batch);
+        
+        
+        // LAYER 9: players
+        for(Player p : _players)
+			p.draw(_batch);
+		
+		
+		// post set OpenGL state
+		Gdx.gl.glDisable(GL20.GL_BLEND);
+    }
+	
+	/**
+	 * @param delta
+	 */
+	private void update(float delta) {
+		if(_isRunning && !_isPaused && !_isSleeping) {
         	// update player
 	 		for(Player p : _players) {
 	 			// update position
@@ -203,23 +239,6 @@ public class GameScreen implements Screen {
         		_isSleeping = false;
         	}
         }
- 		
-		// draw players
-		for(Player p : _players)
-			p.draw(_batch);
-		_bullets.draw(_batch);
-		
-		// draw enemies
-		_enemies.draw(_batch);
-		
-		// draw arena
-		ShapeRenderer sr = new ShapeRenderer();
-		sr.setProjectionMatrix(_batch.getProjectionMatrix());
-		sr.begin(ShapeType.Line);
-		sr.setColor(Color.RED);
-		sr.circle(_arena.x, _arena.y, _arena.z);
-		sr.end();
-		sr.dispose();
 		
 		
 		/// TODO: process by central input class
@@ -231,10 +250,7 @@ public class GameScreen implements Screen {
 		if(_isPaused) {
 			Gdx.app.log("MainLoop", "isPaused");
 		}
-		
-		
-		Gdx.gl.glDisable(GL20.GL_BLEND);
-    }
+	}
 
     /* (non-Javadoc)
      * @see com.badlogic.gdx.Screen#resize(int, int)
