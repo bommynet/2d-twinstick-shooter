@@ -97,10 +97,35 @@ public class GameScreen implements Screen {
 	 */
 	@Override
     public void render(float delta) {
-		update(delta);
+        //### USER INPUT ##################################
+		/// TODO: process by central input class
+		if(Gdx.input.isKeyJustPressed(Keys.SPACE)) {
+			_isPaused = !_isPaused;
+		}
+		
+		
+		//### UPDATE LOGIC ################################
+		// update, if game is running
+		if(_isRunning && !_isPaused && !_isSleeping) {
+			update(delta);
+		}
+		// do a little 'sleep', if isSleeping is set
+		else if(_isRunning && !_isPaused && _isSleeping) {
+        	if(_sleeping > 0) {
+        		_sleeping -= delta;
+        	} else {
+        		_isSleeping = false;
+        	}
+        }
+        
+		
+		//### DRAW EVERYTHING #############################
 		draw();
 	}
 	
+	/**
+	 * 
+	 */
 	private void draw() {
 		// prepare OpenGL state
 		Gdx.gl.glEnable(GL20.GL_BLEND);
@@ -111,10 +136,10 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
  		
-        // LAYER 0: background
+        //### LAYER 0: BACKGROUND #########################
         
         
-        // LAYER 1: arena
+        //### LAYER 1: ARENA ##############################
         ShapeRenderer sr = new ShapeRenderer();
         sr.setProjectionMatrix(_batch.getProjectionMatrix());
         sr.begin(ShapeType.Line);
@@ -124,14 +149,21 @@ public class GameScreen implements Screen {
         sr.dispose();
         
         
-        // LAYER 5: enemies & bullets
+        //### LAYER 5: ENEMIES & BULLETS ##################
         _enemies.draw(_batch);
         _bullets.draw(_batch);
         
         
-        // LAYER 9: players
+        //### LAYER 10: PLAYERS ###########################
         for(Player p : _players)
 			p.draw(_batch);
+        
+        
+        //### LAYER 20: OVERLAY ############################
+        // TODO: draw 'pause'-info to screen
+		if(_isPaused) {
+			Gdx.app.log("MainLoop", "isPaused");
+		}
 		
 		
 		// post set OpenGL state
@@ -142,114 +174,90 @@ public class GameScreen implements Screen {
 	 * @param delta
 	 */
 	private void update(float delta) {
-		if(_isRunning && !_isPaused && !_isSleeping) {
-        	// update player
-	 		for(Player p : _players) {
-	 			// update position
-	 			p.update(delta);
-	 			
-	 			// check for collision with arena walls
-	 			if(p.getPosition().len() + p.getRadius() > _arena.z) {
-	 				Gdx.app.log("GameScreen:Player", "hit arena wall");
-	 				
-	 				Vector2 pos = new Vector2(p.getPosition());
-	 				pos.nor().scl(_arena.z - p.getRadius());
-	 				
-	 				p.setPosition(pos);
-	 			}
-	 			
-	 			// check for collision with enemies
-	 			for(Enemy e : _enemies.get()) {
-	 				// ignore inactive enemies
-	 				if(!e.isMoving()) continue;
-	 				
-	 				// calc lengths
-	 				Vector2 dist = p.getPosition().cpy().sub(e.getPosition());
-	 				float lenDist2 = dist.len2();
-	 				float lenRad2 = (float)Math.pow(p.getRadius() + e.getRadius(), 2);
-	 				
-	 				if(lenDist2 <= lenRad2) {
-	 					/// TODO: how to react on 'player got hit'
-	 					/// currently: kill enemy, hit player
-	 					e.kill();
-	 					p.hit();
-	 				}
-	 			}
-	 		}
-	 		
-	 		
-	 		// update bullets
-	 		_bullets.update(delta);
-	 		
-	 		// check for collision between bullets and arena
-	 		for(Bullet b : _bullets.get()) {
-	 			float len = b.getPosition().len();
-	 			float radius = b.getRadius();
-	 			
-	 			if(len + radius > _arena.z) {
-	 				b.kill();
-	 			}
-	 		}
-	 		
-	 		
-	 		// update enemies
-	 		_enemies.update(delta);
-	 		
-	 		
-	 		// check for collision between enemies and bullets
-	 		for(Enemy e : _enemies.get()) {
-	 			// only check complete spawned enemies (moving ones)
-	 			if(!e.isMoving()) continue;
-	 			
-	 			for(Bullet b : _bullets.get()) {
-	 				Vector2 dist = e.getPosition().cpy().sub(b.getPosition());
-	 				float len = dist.len();
-	 				float lenCollision = e.getRadius() + b.getRadius();
-	 				
-	 				if(len <= lenCollision) {
-	 					Gdx.app.log("Collision", "Enemy <-> Bullet");
-	 					
-	 					// hit/kill both entities
-	 					e.hit();
-	 					b.kill();
-	 					
-	 					// add effekt 'sleep' for each kill
-	 					sleep();
-	 					
-	 					// leave inner loop
-	 					break;
-	 				}
-	 			}
-	 		}
-	 		
-	 		
-	 		// spawn new enemies
-	 		if(_enemySpawnTimer > _enemySpawnDelay) {
-	 			_enemies.add(_players[0]);
-	 			_enemySpawnTimer = 0f;
-	 		} else {
-	 			_enemySpawnTimer += delta;
-	 		}
-        }
-        // do a little 'sleep'
-        else if(_isSleeping) {
-        	if(_sleeping > 0) {
-        		_sleeping -= delta;
-        	} else {
-        		_isSleeping = false;
-        	}
-        }
-		
-		
-		/// TODO: process by central input class
-		if(Gdx.input.isKeyJustPressed(Keys.SPACE)) {
-			_isPaused = !_isPaused;
-		}
-		
-		// TODO: draw 'pause'-info to screen
-		if(_isPaused) {
-			Gdx.app.log("MainLoop", "isPaused");
-		}
+    	//### UPDATE PLAYER ###############################
+ 		for(Player p : _players) {
+ 			// update position
+ 			p.update(delta);
+ 			
+ 			// check for collision with arena walls
+ 			if(p.getPosition().len() + p.getRadius() > _arena.z) {
+ 				Gdx.app.log("GameScreen:Player", "hit arena wall");
+ 				
+ 				Vector2 pos = new Vector2(p.getPosition());
+ 				pos.nor().scl(_arena.z - p.getRadius());
+ 				
+ 				p.setPosition(pos);
+ 			}
+ 			
+ 			// check for collision with enemies
+ 			for(Enemy e : _enemies.get()) {
+ 				// ignore inactive enemies
+ 				if(!e.isMoving()) continue;
+ 				
+ 				// calc lengths
+ 				Vector2 dist = p.getPosition().cpy().sub(e.getPosition());
+ 				float lenDist2 = dist.len2();
+ 				float lenRad2 = (float)Math.pow(p.getRadius() + e.getRadius(), 2);
+ 				
+ 				if(lenDist2 <= lenRad2) {
+ 					/// TODO: how to react on 'player got hit'
+ 					/// currently: kill enemy, hit player
+ 					e.kill();
+ 					p.hit();
+ 				}
+ 			}
+ 		}
+ 		
+ 		
+ 		//### UPDATE BULLETS ##############################
+ 		_bullets.update(delta);
+ 		
+ 		// check for collision between bullets and arena
+ 		for(Bullet b : _bullets.get()) {
+ 			float len = b.getPosition().len();
+ 			float radius = b.getRadius();
+ 			
+ 			if(len + radius > _arena.z) {
+ 				b.kill();
+ 			}
+ 		}
+ 		
+ 		
+ 		//### UPDATE ENEMIES ##############################
+ 		_enemies.update(delta);
+ 		
+ 		// check for collision between enemies and bullets
+ 		for(Enemy e : _enemies.get()) {
+ 			// only check complete spawned enemies (moving ones)
+ 			if(!e.isMoving()) continue;
+ 			
+ 			for(Bullet b : _bullets.get()) {
+ 				Vector2 dist = e.getPosition().cpy().sub(b.getPosition());
+ 				float len = dist.len();
+ 				float lenCollision = e.getRadius() + b.getRadius();
+ 				
+ 				if(len <= lenCollision) {
+ 					// hit/kill both entities
+ 					e.hit();
+ 					b.kill();
+ 					
+ 					// add effekt 'sleep' for each kill
+ 					sleep();
+ 					
+ 					// leave inner loop
+ 					break;
+ 				}
+ 			}
+ 		}
+ 		
+ 		
+ 		// spawn new enemies
+ 		if(_enemySpawnTimer > _enemySpawnDelay) {
+ 			_enemies.add(_players[0]);
+ 			_enemySpawnTimer = 0f;
+ 		} else {
+ 			_enemySpawnTimer += delta;
+ 		}
 	}
 
     /* (non-Javadoc)
