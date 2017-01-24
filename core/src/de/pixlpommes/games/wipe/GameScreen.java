@@ -1,8 +1,5 @@
 package de.pixlpommes.games.wipe;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
@@ -151,7 +148,7 @@ public class GameScreen implements Screen {
 	 			float radius = b.getRadius();
 	 			
 	 			if(len + radius > _arena.z) {
-	 				Vector2 a = b.kill();
+	 				b.kill();
 	 			}
 	 		}
 	 		
@@ -175,7 +172,7 @@ public class GameScreen implements Screen {
 	 					
 	 					// kill both entities
 	 					e.hit();
-	 					Vector2 a = b.kill();
+	 					b.kill();
 	 					
 	 					// add effekt 'sleep' for each kill
 	 					sleep();
