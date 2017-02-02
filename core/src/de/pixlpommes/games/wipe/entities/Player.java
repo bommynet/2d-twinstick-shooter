@@ -11,7 +11,7 @@ import de.pixlpommes.games.wipe.manager.Bullets;
 import de.pixlpommes.libgdx.gamepad.Gamepad;
 
 /**
- * <p>A player and all it's data and graphics.</p>
+ * <p>A player and his torret and all their data and graphics.</p>
  * 
  * @author Thomas Borck
  */
@@ -40,8 +40,13 @@ public class Player {
 	/** player moving speed */
 	private float _speed = 300;
 	
-	/** player texture(s) */
-	private TextureRegion _texReg;
+	/** players texture(s) */
+	private TextureRegion _texPlayer;
+	
+	
+	// TORRET
+	/** torret texture(s) */
+	private TextureRegion _texTorret;
 	
 	
 	// TARGET CROSS
@@ -86,8 +91,11 @@ public class Player {
 		_pos = pos.cpy();
 		_lookat = lookat.cpy();
 		
-		Texture texture = new Texture(Gdx.files.internal("player.png"));
-		_texReg = new TextureRegion(texture);
+		Texture texTorret = new Texture(Gdx.files.internal("torret.png"));
+		_texTorret = new TextureRegion(texTorret);
+		
+		Texture texPlayer = new Texture(Gdx.files.internal("player.png"));
+		_texPlayer = new TextureRegion(texPlayer);
 	}
 	
 	
@@ -115,7 +123,10 @@ public class Player {
 		// fire!
 		if(_bulletTimer > _bulletDelay) {
 			if(!_pos.epsilonEquals(_cross, EQUALDIFF)) {
-				_bullets.add(_pos.cpy(), _cross.cpy().sub(_pos).nor().scl(_bulletSpeed));
+				// spawn bullets in front of and not below the player
+				Vector2 corPos = _lookat.cpy().scl(_texTorret.getRegionWidth() / 2f);
+				
+				_bullets.add(corPos.cpy(), _cross.cpy().sub(_pos).nor().scl(_bulletSpeed));
 			}
 			_bulletTimer = 0f;
 		} else {
@@ -132,22 +143,34 @@ public class Player {
 		ShapeRenderer sr = new ShapeRenderer();
 		sr.setProjectionMatrix(batch.getProjectionMatrix());
 		
-		// player angle
+		// torret angle
 		float angle = (float) (180.0f / Math.PI *  Math.atan2(_lookat.y, _lookat.x));
 		
-		// draw player
+		// draw torret
 		batch.begin();
-		batch.draw(_texReg,
-				_pos.x - _texReg.getRegionWidth() / 2f, // x
-				_pos.y - _texReg.getRegionHeight() / 2f, // y
-				_texReg.getRegionWidth() / 2f, // originX
-				_texReg.getRegionHeight() / 2f, // originY
-				_texReg.getRegionWidth(), // width,
-				_texReg.getRegionHeight(), // height
+		batch.draw(_texTorret,
+				-_texTorret.getRegionWidth() / 2f, // x
+				-_texTorret.getRegionHeight() / 2f, // y
+				_texTorret.getRegionWidth() / 2f, // originX
+				_texTorret.getRegionHeight() / 2f, // originY
+				_texTorret.getRegionWidth(), // width,
+				_texTorret.getRegionHeight(), // height
 				1.0f, 1.0f, // scaleX, scaleY
 				angle); // rotation
 		batch.end();
 		
+		// draw player
+		batch.begin();
+		batch.draw(_texPlayer,
+				_pos.x - _texPlayer.getRegionWidth() / 2f, // x
+				_pos.y - _texPlayer.getRegionHeight() / 2f, // y
+				_texPlayer.getRegionWidth() / 2f, // originX
+				_texPlayer.getRegionHeight() / 2f, // originY
+				_texPlayer.getRegionWidth(), // width,
+				_texPlayer.getRegionHeight(), // height
+				1.0f, 1.0f, // scaleX, scaleY
+				0.0f); // rotation | TODO: rotate player to look in moving direction
+		batch.end();
 //		sr.begin(ShapeType.Filled);
 //		sr.setColor(Color.YELLOW);
 //		sr.circle(_pos.x, _pos.y, _radius);
