@@ -132,7 +132,7 @@ public class GameScreen implements Screen {
 		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		
         // clear screen
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
+        Gdx.gl.glClearColor(0.2f, 0.2f, 0.8f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
  		

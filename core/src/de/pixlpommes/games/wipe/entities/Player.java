@@ -1,10 +1,10 @@
 package de.pixlpommes.games.wipe.entities;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 
 import de.pixlpommes.games.wipe.manager.Bullets;
@@ -39,6 +39,9 @@ public class Player {
 	
 	/** player moving speed */
 	private float _speed = 300;
+	
+	/** player texture(s) */
+	private TextureRegion _texReg;
 	
 	
 	// TARGET CROSS
@@ -82,6 +85,9 @@ public class Player {
 		_bullets = bullets;
 		_pos = pos.cpy();
 		_lookat = lookat.cpy();
+		
+		Texture texture = new Texture(Gdx.files.internal("player.png"));
+		_texReg = new TextureRegion(texture);
 	}
 	
 	
@@ -126,29 +132,45 @@ public class Player {
 		ShapeRenderer sr = new ShapeRenderer();
 		sr.setProjectionMatrix(batch.getProjectionMatrix());
 		
+		// player angle
+		float angle = (float) (180.0f / Math.PI *  Math.atan2(_lookat.y, _lookat.x));
+		
 		// draw player
-		sr.begin(ShapeType.Filled);
-		sr.setColor(Color.YELLOW);
-		sr.circle(_pos.x, _pos.y, _radius);
-		sr.end();
-		sr.begin(ShapeType.Line);
-		sr.setColor(Color.BLACK);
-		Vector2 marker = new Vector2(_dir).scl(10).add(_pos);
-		sr.line(_pos.x, _pos.y, marker.x, marker.y);
+		batch.begin();
+		batch.draw(_texReg,
+				_pos.x - _texReg.getRegionWidth() / 2f, // x
+				_pos.y - _texReg.getRegionHeight() / 2f, // y
+				_texReg.getRegionWidth() / 2f, // originX
+				_texReg.getRegionHeight() / 2f, // originY
+				_texReg.getRegionWidth(), // width,
+				_texReg.getRegionHeight(), // height
+				1.0f, 1.0f, // scaleX, scaleY
+				angle); // rotation
+		batch.end();
 		
-		sr.setColor(Color.YELLOW);
-		Vector2 c = new Vector2(_lookat).scl(2*_radius).add(_pos);
-		sr.circle(c.x, c.y, _radius*0.75f);
-		sr.end();
-		
-		// draw target cross
-		if(!_pos.epsilonEquals(_cross, EQUALDIFF)) {
-			sr.begin(ShapeType.Line);
-			sr.setColor(Color.RED);
-			sr.line(_cross.x - 5, _cross.y, _cross.x + 5, _cross.y);
-			sr.line(_cross.x, _cross.y - 5, _cross.x, _cross.y + 5);
-			sr.end();
-		}
+//		sr.begin(ShapeType.Filled);
+//		sr.setColor(Color.YELLOW);
+//		sr.circle(_pos.x, _pos.y, _radius);
+//		sr.end();
+//		
+//		sr.begin(ShapeType.Line);
+//		sr.setColor(Color.BLACK);
+//		Vector2 marker = new Vector2(_dir).scl(10).add(_pos);
+//		sr.line(_pos.x, _pos.y, marker.x, marker.y);
+//		
+//		sr.setColor(Color.YELLOW);
+//		Vector2 c = new Vector2(_lookat).scl(2*_radius).add(_pos);
+//		sr.circle(c.x, c.y, _radius*0.75f);
+//		sr.end();
+//		
+//		// draw target cross
+//		if(!_pos.epsilonEquals(_cross, EQUALDIFF)) {
+//			sr.begin(ShapeType.Line);
+//			sr.setColor(Color.RED);
+//			sr.line(_cross.x - 5, _cross.y, _cross.x + 5, _cross.y);
+//			sr.line(_cross.x, _cross.y - 5, _cross.x, _cross.y + 5);
+//			sr.end();
+//		}
 		
 		sr.dispose();
 	}
