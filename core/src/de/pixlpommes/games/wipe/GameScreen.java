@@ -1,8 +1,8 @@
 package de.pixlpommes.games.wipe;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -16,6 +16,7 @@ import com.badlogic.gdx.math.Vector3;
 import de.pixlpommes.games.wipe.entities.Bullet;
 import de.pixlpommes.games.wipe.entities.Enemy;
 import de.pixlpommes.games.wipe.entities.Player;
+import de.pixlpommes.games.wipe.entities.Torret;
 import de.pixlpommes.games.wipe.manager.Bullets;
 import de.pixlpommes.games.wipe.manager.Enemies;
 import de.pixlpommes.libgdx.gamepad.Gamepad;
@@ -44,6 +45,9 @@ public class GameScreen implements Screen {
 	
 	/** all active players */
 	private Player[] _players;
+	
+	/** a players torret */
+	private Torret _torret;
 	
 	/** TODO: description */
 	private Bullets _bullets;
@@ -83,7 +87,8 @@ public class GameScreen implements Screen {
 			Gamepad pad = new Gamepad(Controllers.getControllers().first());
 			Controllers.addListener(pad);
 			
-			_players[0] = new Player(pad, _bullets);
+			_players[0] = new Player(pad);
+			_torret = new Torret(pad, _bullets);
 		}
 		
 		// TODO: setup arena
@@ -157,6 +162,7 @@ public class GameScreen implements Screen {
         //### LAYER 10: PLAYERS ###########################
         for(Player p : _players)
 			p.draw(_batch);
+        _torret.draw(_batch);
         
         
         //### LAYER 20: OVERLAY ############################
@@ -207,6 +213,10 @@ public class GameScreen implements Screen {
  				}
  			}
  		}
+ 		
+ 		
+ 		//### UPDATE TORRET ###############################
+ 		_torret.update(delta);
  		
  		
  		//### UPDATE BULLETS ##############################
