@@ -43,8 +43,8 @@ public class GameScreen implements Screen {
 	/** standard 2D camera */
 	private OrthographicCamera _cam;
 	
-	/** all active players */
-	private Player[] _players;
+	/** the player players */
+	private Player _player;
 	
 	/** a players torret */
 	private Torret _torret;
@@ -78,16 +78,13 @@ public class GameScreen implements Screen {
 		_cam = new OrthographicCamera();
 		_batch = new SpriteBatch();
 		
-		// TODO: setup players and their input
-		_players = new Player[1];
-		
 		_bullets = new Bullets();
 		
 		if(Controllers.getControllers().size > 0) {
 			Gamepad pad = new Gamepad(Controllers.getControllers().first());
 			Controllers.addListener(pad);
 			
-			_players[0] = new Player(pad);
+			_player = new Player(pad);
 			_torret = new Torret(pad, _bullets);
 		}
 		
@@ -160,8 +157,7 @@ public class GameScreen implements Screen {
         
         
         //### LAYER 10: PLAYERS ###########################
-        for(Player p : _players)
-			p.draw(_batch);
+        _player.draw(_batch);
         _torret.draw(_batch);
         
         
@@ -181,38 +177,35 @@ public class GameScreen implements Screen {
 	 */
 	private void update(float delta) {
     	//### UPDATE PLAYER ###############################
- 		for(Player p : _players) {
- 			// update position
- 			p.update(delta);
+ 		_player.update(delta);
  			
- 			// check for collision with arena walls
- 			if(p.getPosition().len() + p.getRadius() > _arena.z) {
- 				Gdx.app.log("GameScreen:Player", "hit arena wall");
- 				
- 				Vector2 pos = new Vector2(p.getPosition());
- 				pos.nor().scl(_arena.z - p.getRadius());
- 				
- 				p.setPosition(pos);
- 			}
+		// check for collision with arena walls
+		if(_player.getPosition().len() + _player.getRadius() > _arena.z) {
+			Gdx.app.log("GameScreen:Player", "hit arena wall");
+			
+			Vector2 pos = new Vector2(_player.getPosition());
+			pos.nor().scl(_arena.z - _player.getRadius());
+			
+			_player.setPosition(pos);
+		}
  			
- 			// check for collision with enemies
- 			for(Enemy e : _enemies.get()) {
- 				// ignore inactive enemies
- 				if(!e.isMoving()) continue;
- 				
- 				// calc lengths
- 				Vector2 dist = p.getPosition().cpy().sub(e.getPosition());
- 				float lenDist2 = dist.len2();
- 				float lenRad2 = (float)Math.pow(p.getRadius() + e.getRadius(), 2);
- 				
- 				if(lenDist2 <= lenRad2) {
- 					/// TODO: how to react on 'player got hit'
- 					/// currently: kill enemy, hit player
- 					e.kill();
- 					p.hit();
- 				}
- 			}
- 		}
+		// check for collision with enemies
+		for(Enemy e : _enemies.get()) {
+			// ignore inactive enemies
+			if(!e.isMoving()) continue;
+			
+			// calc lengths
+			Vector2 dist = _player.getPosition().cpy().sub(e.getPosition());
+			float lenDist2 = dist.len2();
+			float lenRad2 = (float)Math.pow(_player.getRadius() + e.getRadius(), 2);
+			
+			if(lenDist2 <= lenRad2) {
+				/// TODO: how to react on 'player got hit'
+				/// currently: kill enemy, hit player
+				e.kill();
+				_player.hit();
+			}
+		}
  		
  		
  		//### UPDATE TORRET ###############################
@@ -263,7 +256,7 @@ public class GameScreen implements Screen {
  		
  		// spawn new enemies
  		if(_enemySpawnTimer > _enemySpawnDelay) {
- 			_enemies.add(_players[0]);
+ 			_enemies.add(_player);
  			_enemySpawnTimer = 0f;
  		} else {
  			_enemySpawnTimer += delta;
