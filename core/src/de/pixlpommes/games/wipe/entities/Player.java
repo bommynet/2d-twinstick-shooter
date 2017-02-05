@@ -41,7 +41,7 @@ public class Player {
 	 * @param pad
 	 */
 	public Player(Gamepad pad) {
-		this(pad, new Vector2());
+		this(pad, new Vector2(0, 100));
 	}
 	
 	/**

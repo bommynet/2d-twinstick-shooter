@@ -181,10 +181,22 @@ public class GameScreen implements Screen {
  			
 		// check for collision with arena walls
 		if(_player.getPosition().len() + _player.getRadius() > _arena.z) {
-			Gdx.app.log("GameScreen:Player", "hit arena wall");
+			//Gdx.app.log("GameScreen:Player", "hit arena wall");
 			
 			Vector2 pos = new Vector2(_player.getPosition());
 			pos.nor().scl(_arena.z - _player.getRadius());
+			
+			_player.setPosition(pos);
+		}
+		
+		// check for collision with torret
+		float lenDist2 = _player.getPosition().cpy().sub(_torret.getPosition()).len2();
+		float lenRad2 = (float)Math.pow(_player.getRadius() + _torret.getRadius(), 2);
+		if(lenRad2 > lenDist2) {
+			//Gdx.app.log("GameScreen:Player", "hit torret");
+			
+			Vector2 pos = new Vector2(_player.getPosition());
+			pos.nor().scl(_player.getRadius() + _torret.getRadius());
 			
 			_player.setPosition(pos);
 		}
@@ -196,8 +208,8 @@ public class GameScreen implements Screen {
 			
 			// calc lengths
 			Vector2 dist = _player.getPosition().cpy().sub(e.getPosition());
-			float lenDist2 = dist.len2();
-			float lenRad2 = (float)Math.pow(_player.getRadius() + e.getRadius(), 2);
+			lenDist2 = dist.len2();
+			lenRad2 = (float)Math.pow(_player.getRadius() + e.getRadius(), 2);
 			
 			if(lenDist2 <= lenRad2) {
 				/// TODO: how to react on 'player got hit'
