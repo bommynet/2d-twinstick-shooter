@@ -200,4 +200,11 @@ public class Enemy {
 	public float getRadius() {
 		return _radius;
 	}
+	
+	/**
+	 * @return
+	 */
+	public Vector2 getVelocity() {
+		return _vel;
+	}
 }

@@ -206,7 +206,7 @@ public class GameScreen implements Screen {
 			// ignore inactive enemies
 			if(!e.isMoving()) continue;
 			
-			// calc lengths
+			// player with enemy
 			Vector2 dist = _player.getPosition().cpy().sub(e.getPosition());
 			lenDist2 = dist.len2();
 			lenRad2 = (float)Math.pow(_player.getRadius() + e.getRadius(), 2);
@@ -216,6 +216,16 @@ public class GameScreen implements Screen {
 				/// currently: kill enemy, hit player
 				e.kill();
 				_player.hit();
+			}
+			
+			// torret with enemy
+			lenDist2 = e.getPosition().cpy().sub(_torret.getPosition()).len2();
+			lenRad2 = (float)Math.pow(e.getRadius() + _torret.getRadius(), 2);
+			if(lenRad2 > lenDist2) {
+				//Gdx.app.log("GameScreen:Enemy", "hit torret");
+				
+				// TODO: calculate reflection instead of inverting velocity
+				e.getVelocity().scl(-1);
 			}
 		}
  		
